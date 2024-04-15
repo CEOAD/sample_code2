@@ -59,8 +59,14 @@ pipeline {
             }
             post {
                 always {
-                    // Update test-results.xml path if necessary
-                    junit 'test-results.xml'
+                    script {
+                        if (fileExists('test-reports')) {
+                            junit 'test-reports/*.xml'
+                        }
+                        if (fileExists('api-test-reports')) {
+                            junit 'api-test-reports/*.xml'
+                        }
+                    }
                 }
             }
         }
