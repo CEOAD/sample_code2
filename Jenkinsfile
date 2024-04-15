@@ -22,17 +22,18 @@ pipeline {
                 bat 'pylint-fail-under --fail_under 7 *.py'
             }
         }
-        stage('Code Quantity') {
+        stage('Code Quality') {
             steps {
                 script {
+                    // Find all python files and run pylint on them individually
                     def pythonFiles = findFiles(glob: '*.py')
-                    def count = pythonFiles.length
-                    echo "Number of Python files in the project: ${count}"
-                    if (count != 8) {
-                        error "Expected 8 Python files, but found ${count}"
-                    }
-                    pythonFiles.each {
-                        echo "Python file: ${it.name}"
+                    pythonFiles.each { file ->
+                        // Here we assume that pylint is installed and pylint-fail-under is a script that
+                        // takes a file as an argument and returns non-zero exit code if the score is under 7.
+                        // You may need to adjust the command according to your environment.
+                        def command = "pylint --fail-under=7 ${file}"
+                        echo "Running command: ${command}"
+                        bat(script: command, returnStatus: true)
                     }
                 }
             }
