@@ -18,12 +18,6 @@ pipeline {
         }
         stage('Code Quality') {
             steps {
-                // Ensure pylint-fail-under is a Windows compatible script or command
-                bat 'pylint-fail-under --fail_under 7 *.py'
-            }
-        }
-        stage('Code Quality') {
-            steps {
                 script {
                     // Find all python files and run pylint on them individually
                     def pythonFiles = findFiles(glob: '*.py')
@@ -34,6 +28,22 @@ pipeline {
                         def command = "pylint --fail-under=7 ${file}"
                         echo "Running command: ${command}"
                         bat(script: command, returnStatus: true)
+                    }
+                }
+            }
+        }
+
+        stage('Code Quantity') {
+            steps {
+                script {
+                    def pythonFiles = findFiles(glob: '*.py')
+                    def count = pythonFiles.length
+                    echo "Number of Python files in the project: ${count}"
+                    if (count != 8) {
+                        error "Expected 8 Python files, but found ${count}"
+                    }
+                    pythonFiles.each {
+                        echo "Python file: ${it.name}"
                     }
                 }
             }
