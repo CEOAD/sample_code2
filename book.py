@@ -7,7 +7,7 @@ class Book(Base):
     """ Book Class """
 
     __tablename__ = "books"
-
+GESgSE
     id = Column(Integer, primary_key=True)
     timestamp = Column(DateTime, default=datetime.datetime.now)
     title = Column(String(250))

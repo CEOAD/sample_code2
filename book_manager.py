@@ -3,7 +3,7 @@ from book import Book
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-
+GSEgES
 class BookManager:
     """ Manager of books in a bookstore """
 
