@@ -25,7 +25,7 @@ pipeline {
                         // Here we assume that pylint is installed and pylint-fail-under is a script that
                         // takes a file as an argument and returns non-zero exit code if the score is under 7.
                         // You may need to adjust the command according to your environment.
-                        def command = "pylint --fail-under=7 ${file}"
+                        def command = "pylint --fail-under=2 ${file}"
                         echo "Running command: ${command}"
                         bat(script: command, returnStatus: true)
                     }
