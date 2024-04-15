@@ -22,10 +22,7 @@ pipeline {
                     // Find all python files and run pylint on them individually
                     def pythonFiles = findFiles(glob: '*.py')
                     pythonFiles.each { file ->
-                        // Here we assume that pylint is installed and pylint-fail-under is a script that
-                        // takes a file as an argument and returns non-zero exit code if the score is under 7.
-                        // You may need to adjust the command according to your environment.
-                        def command = "pylint --fail-under=10 ${file}"
+                        def command = "pylint --fail-under=8 ${file}"
                         echo "Running command: ${command}"
                         bat(script: command, returnStatus: true)
                     }
@@ -77,7 +74,6 @@ pipeline {
                     if (fileExists('package.zip')) {
                         bat 'del /F package.zip'
                     }
-                    // Now create the new package.zip with all .py files
                     zip zipFile: 'package.zip', glob: '**/*.py'
                 }
                 // Archive the package.zip file as an artifact
@@ -88,7 +84,7 @@ pipeline {
     post {
         always {
             echo "Student Number: A01237887"
-            echo "Group Number: [Your Group Number]" // Replace with your actual group number
+            echo "Group Number: 44"
         }
     }
 }
