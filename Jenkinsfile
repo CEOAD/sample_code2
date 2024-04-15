@@ -12,28 +12,27 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Installing the Python Requirements...'
-                sh 'pip install -r requirements.txt'
+                bat 'pip install -r requirements.txt'
                 echo 'Requirement complete.'
             }
         }
         stage('Code Quality') {
             steps {
-                // Assuming pylint-fail-under is a script or command available in your environment
-                sh 'pylint-fail-under --fail_under 7 *.py'
+                // Ensure pylint-fail-under is a Windows compatible script or command
+                bat 'pylint-fail-under --fail_under 7 *.py'
             }
         }
         stage('Code Quantity') {
             steps {
                 script {
-                    def count = sh(script: "ls -1 *.py | wc -l", returnStdout: true).trim()
+                    def pythonFiles = findFiles(glob: '*.py')
+                    def count = pythonFiles.length
                     echo "Number of Python files in the project: ${count}"
-                    if (count.toInteger() != 8) {
+                    if (count != 8) {
                         error "Expected 8 Python files, but found ${count}"
                     }
-                    // Groovy for-loop to iterate through each Python file and display its name
-                    def files = sh(script: "ls -1 *.py", returnStdout: true).trim().split("\n")
-                    for (file in files) {
-                        echo "Python file: ${file}"
+                    pythonFiles.each {
+                        echo "Python file: ${it.name}"
                     }
                 }
             }
@@ -45,25 +44,29 @@ pipeline {
                 }
             }
             steps {
-                sh 'python -m unittest test_book_manager.py'
+                bat 'python -m unittest test_book_manager.py'
             }
             post {
                 always {
-                    junit 'test-results.xml' // Make sure your tests output a JUnit compatible XML report
+                    // Update test-results.xml path if necessary
+                    junit 'test-results.xml'
                 }
             }
         }
         stage('Package') {
             steps {
-                sh 'zip package.zip *.py'
+                script {
+                    def pythonFiles = findFiles(glob: '*.py')
+                    zip zipFile: 'package.zip', archive: true, glob: '*.py'
+                }
                 archiveArtifacts artifacts: 'package.zip', fingerprint: true
             }
         }
     }
     post {
         always {
-            echo "Student Number: [Your Student Number]"
-            echo "Group Number: [Your Group Number]"
+            echo "Student Number: A01237887"
+            echo "Group Number: [Your Group Number]" // Replace with your actual group number
         }
     }
 }
