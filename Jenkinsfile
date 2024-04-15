@@ -73,9 +73,14 @@ pipeline {
         stage('Package') {
             steps {
                 script {
-                    def pythonFiles = findFiles(glob: '*.py')
-                    zip zipFile: 'package.zip', archive: true, glob: '*.py'
+                    // Check if package.zip exists and remove it if it does
+                    if (fileExists('package.zip')) {
+                        bat 'del /F package.zip'
+                    }
+                    // Now create the new package.zip with all .py files
+                    zip zipFile: 'package.zip', glob: '**/*.py'
                 }
+                // Archive the package.zip file as an artifact
                 archiveArtifacts artifacts: 'package.zip', fingerprint: true
             }
         }
